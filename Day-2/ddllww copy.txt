@@ -1,0 +1,14 @@
+ROCK
+A X - lose (scissors) 3 + 0
+A Y - draw (rock) 1 + 3
+A Z - win (paper) 2 + 6
+
+PAPER
+B X - lose (rock) 1 + 0
+B Y - draw (paper) 2 + 3
+B Z - win (scissors) 3 + 6
+
+SCISSORS
+C X - lose (paper) 2 + 0
+C Y - draw (scissors) 3 + 3
+C Z - win (rock) 1 + 6

@@ -2,7 +2,7 @@ const { Console } = require('console');
 const fs = require('fs')
 const path = require('path')
 
-const filePath = path.join(__dirname, 'example.txt');
+const filePath = path.join(__dirname, 'input.txt');
 /**
 COLUMMN A
 A = Rock (1)
@@ -32,37 +32,77 @@ fs.readFile(filePath, {encoding: 'utf-8'}, (err, data) => {
     if (!err) {
         
     //a function that checks the result of the game and returns the score
+    //TODO Fix this, it's not just greater than or less than
     const checkGame = (them, me) => {
-        if (them > me) {
-            return 0
-        } else if (them === me) {
-            return 3
-        } else if (them < me) {
-            return 6
+        if (them === "A"){
+            switch(me) {
+                case "X":
+                return 3
+                break;
+            case "Y":
+                return 6;
+                break;
+            case "Z":
+                return 0;
+                break;
+            }
+        } else if (them === "B") {
+            switch(me) {
+                case "X":
+                return 0
+                break;
+            case "Y":
+                return 3;
+                break;
+            case "Z":
+                return 6;
+                break;
+            }
+        } else if (them === "C") {
+            switch(me) {
+                case "X":
+                return 6
+                break;
+            case "Y":
+                return 0;
+                break;
+            case "Z":
+                return 3;
+                break;
+            }
         }
     }
+    
     const convertMove = (move) => {
-        if (move === "A" || move === "X") {
+        if (move === "X") {
             return 1
         }
-        if (move === "B" || move === "Y") {
+        if (move === "Y") {
             return 2
         }
-        if (move === "C" || move === "Z") {
+        if (move === "Z") {
             return 3
         }
     }
         const gameScores = []
+        const myMovePoints = []
+        const totalPoints = []
         const allData = data.split('\n'); //split the data into games (pairs)
         //console.log(allData)
         for (pair of allData) {
-            const theirMove = convertMove(pair[0])
+            //const theirMove = convertMove(pair[0])
             const myMove = convertMove(pair[2])
-            gameScores.push(checkGame(theirMove, myMove))
+            myMovePoints.push(myMove)
+            gameScores.push(checkGame(pair[0], pair[2]))
         }
-        console.log(gameScores)
-        
-        
+        //console.log(myMovePoints)
+        //console.log(gameScores)
+        for (let i = 0; i < gameScores.length; i++) {
+            totalPoints.push(myMovePoints[i] + gameScores[i])
+        }
+        //console.log(totalPoints)
+        const totalScore = totalPoints.reduce((sum, next) => sum += next)
+        console.log(`The total score after all games is ${totalScore}`)
      } else {
             console.error(err);
         }
