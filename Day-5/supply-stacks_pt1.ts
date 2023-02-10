@@ -3,7 +3,7 @@ import { RecordWithTtl } from "dns";
 const filesys = require("fs");
 const path_ = require("path");
 
-const file_path = path_.join(__dirname, "example.txt");
+const file_path = path_.join(__dirname, "input.txt");
 
 filesys.readFile(file_path, { encoding: "utf-8" }, (err: any, data: string) => {
   if (!err) {
@@ -27,7 +27,7 @@ filesys.readFile(file_path, { encoding: "utf-8" }, (err: any, data: string) => {
     const firstLine: string[] = data.split("\n", 1)[0].split("\r", 1);
     //this is just the containers, excluding column numbers;
     const containers: string[] = data
-      .split("\n", 3)
+      .split("\n", 8) //change this to 8 for the input
       .map((row) => row.split("\r", 1)[0].concat(" "));
 
     //this is all the instructions
@@ -63,10 +63,17 @@ filesys.readFile(file_path, { encoding: "utf-8" }, (err: any, data: string) => {
       }
       return stack;
     };
+
+    //fill the stacks array with each column
     for (let i = 0; i < containers.length; i++) {
       parseRow(containers[i], stacks);
     }
-    //console.log(stacks);
+
+    //strip empty spaces out of each stack
+    for (let i = 0; i < stacks.length; i++) {
+      let cleanedStack = stacks[i].filter((item) => item != "    ");
+      stacks[i] = cleanedStack;
+    }
 
     const parseInstruction = (row: string) => {
       const split = row.split(" ");
@@ -78,7 +85,7 @@ filesys.readFile(file_path, { encoding: "utf-8" }, (err: any, data: string) => {
       return vals;
     };
 
-    let example = "move 2 from 2 to 1";
+    //let example = "move 2 from 2 to 1";
     //console.log(parseInstruction(example));
 
     const parseInstructions = (rows: string[]) => {
@@ -89,7 +96,37 @@ filesys.readFile(file_path, { encoding: "utf-8" }, (err: any, data: string) => {
       return InstructionNums;
     };
 
-    console.log(parseInstructions(instructions));
+    //console.log(parseInstructions(instructions));
+
+    let stack1 = ["a", "b", "c"];
+    let stack2 = ["d", "e", " "];
+    let both = [stack1, stack2];
+    const performInstruction = (stacks: string[][], moves: number[]) => {
+      // console.log(`moves: `, moves);
+      // console.log(`stacks: `, stacks);
+      //moves[n] will never be 0
+      const numBoxes = moves[0];
+      const firstStack = stacks[moves[1] - 1]; //stacks[2]
+      const nextStack = stacks[moves[2] - 1]; //stacks[1]
+      for (let i = 1; i <= numBoxes; i++) {
+        let topBox: string = firstStack.pop()!;
+        nextStack.push(topBox);
+      }
+      return stacks;
+    };
+    //console.log(performInstruction(both, parseInstructions(instructions)[3]));
+
+    //console.log(performInstruction(stacks, parseInstructions(instructions)[0]));
+
+    for (let i = 0; i < instructions.length; i++) {
+      performInstruction(stacks, parseInstructions(instructions)[i]);
+    }
+    console.log(stacks);
+    const topMessage: any = [];
+    for (let i = 0; i < stacks.length; i++) {
+      topMessage.push(stacks[i].pop());
+    }
+    console.log(topMessage);
   } else {
     console.error(err);
   }
